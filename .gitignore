@@ -1,0 +1,48 @@
+# -------------------------
+# Python cache and artifacts
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+build/
+dist/
+
+# -------------------------
+# Virtual environments
+# -------------------------
+venv/
+.env/
+.venv/
+
+# -------------------------
+# IDE / Editor files
+# -------------------------
+.vscode/
+.idea/
+*.swp
+
+# -------------------------
+# Data sub-directories' contents (keep folders, ignore contents)
+# -------------------------
+data/input/*
+data/output/*
+data/temp/*
+
+# Explicitly keep the data sub-directories
+!data/input/
+!data/output/
+!data/temp/
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+
+# -------------------------
+# OS files
+# -------------------------
+.DS_Store
+Thumbs.db

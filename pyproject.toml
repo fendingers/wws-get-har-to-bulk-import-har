@@ -1,0 +1,11 @@
+[project] 
+name = "wws-get-har-to-bulk-import-har" 
+version = "0.1.0" 
+
+dependencies = [ 
+	"lxml",
+	"pandas",
+	"openpyxl",
+	"xmltodict",
+	"pyyaml" 
+]

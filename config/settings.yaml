@@ -1,0 +1,6 @@
+max_file_size_mb: 25
+split_element: "Historical_Academic_Record" 
+xslt_path: "config/transform.xslt" 
+input_dir: "data/input" 
+output_dir: "data/output" 
+temp_dir: "data/temp"
