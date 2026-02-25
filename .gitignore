@@ -32,9 +32,9 @@ data/output/*
 data/temp/*
 
 # Explicitly keep the data sub-directories
-!data/input/
-!data/output/
-!data/temp/
+!data/input/.gitkeep
+!data/output/.gitkeep
+!data/temp/.gitkeep
 
 # -------------------------
 # Logs
