@@ -35,12 +35,12 @@ data/temp/*
 # Explicitly keep the data sub-directories
 !data/input/.gitkeep
 !data/output/.gitkeep
-!data/temp/.gitkeep
+!data/output/logs/.gitkeep
 
 # -------------------------
-# Logs
+# Keep log files
 # -------------------------
-*.log
+!data/output/logs/*
 
 # -------------------------
 # OS files

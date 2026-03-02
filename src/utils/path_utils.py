@@ -10,6 +10,7 @@
     MM-DD-YYYY     Provide a meaningful description of what you changed and why
 *******************************************************************************
     02/27/2026      Initial Version. ECC - fendingers
+    03/02/2026      Added logs dir.  ECC - fendingers
 *******************************************************************************
  project_root(): Resolves the project root directory.
  get_dir_path(): Resolves the provided directory path against cached (enum).
@@ -31,6 +32,7 @@ class DirNames(StrEnum):
     DATA_DIR      = "data"
     INPUT_DIR     = "input"
     OUTPUT_DIR    = "output"
+    LOG_DIR       = "logs"
     TEMP_DIR      = "temp"
     SRC_DIR       = "src"
     EXCEL_DIR     = "excel"
@@ -54,6 +56,7 @@ class ConfNames(StrEnum):
     TRANSFORM    = "transform.xslt"
     PYPROJECT    = "pyproject.toml"
     PYTEST       = "pytest.ini"
+    LOG          = "log_out.log"
 
 
 @lru_cache(maxsize=None)
@@ -119,9 +122,6 @@ def _search_for_dir(name: str) -> Path:
     dir_path = None
     
     for dir in project_root().iterdir():
-        # TODO: Log this instead
-        print("Searching dir '" + str(dir) + "...")
-        
         dir_path = Path(dir / name)
                
         if dir_path != None and dir_path.exists():
@@ -160,6 +160,12 @@ def get_dir_path(name: str) -> Path:
         case DirNames.OUTPUT_DIR:
             dir_path = (
                 project_root() / DirNames.DATA_DIR / DirNames.OUTPUT_DIR
+            )
+            
+        case DirNames.LOG_DIR:
+            dir_path = (
+                project_root() / DirNames.DATA_DIR / DirNames.OUTPUT_DIR /
+                    DirNames.LOG_DIR
             )
             
         case DirNames.TEMP_DIR:
@@ -275,8 +281,6 @@ def _search_for_file(name: str) -> Path:
             file_path = get_dir_path(dir) / name
             
         except FileNotFoundError:
-            # TODO: Log this instead
-            print("Searching dir '" + str(dir) + "...")
             continue
         
         finally:
@@ -313,6 +317,9 @@ def get_file_path(name: str, dir: str = DirNames.SRC_DIR) -> Path:
                 
             case ConfNames.PYTEST:
                 file_path = get_dir_path(dir) / ConfNames.PYTEST
+                
+            case ConfNames.LOG:
+                file_path = get_dir_path(dir) / ConfNames.LOG
                 
             case _:
                 file_path = get_dir_path(dir) / name
