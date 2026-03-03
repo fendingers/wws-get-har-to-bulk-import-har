@@ -5,7 +5,7 @@ Main pipeline orchestrator.
 # from splitting.splitter import XMLSplitter
 # from transform.xslt_transformer import XSLTTransformer
 # from excel.xml_to_excel import XMLToExcel
-from utils.logger import get_logger
+from utils.logger import get_logger, kill_terminal
 
 main_logger = get_logger()
 
@@ -29,3 +29,4 @@ def run_pipeline():
 
 if __name__ == "__main__":
     run_pipeline()
+    kill_terminal()

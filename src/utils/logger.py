@@ -11,6 +11,8 @@
 *******************************************************************************
     02/25/2026      Initial Version. ECC - fendingers
     02/26/2026      Reformat 80 col. ECC - fendingers
+    03/03/2026      Added log wiper. ECC - fendingers
+    03/03/2026      Added term kill. ECC - fendingers
 *******************************************************************************
  get_logger(): Creates a new logger with the input name. 
  kill_logger(): Removes all of the handlers associated with a logger.
@@ -18,6 +20,7 @@
  _fallback_basic_config(): Sets the lets the fallback logging format.
  _open_tail_terminal(): Opens a new terminal window for the root loggerm and
  stores the output in a tail file.
+ _erase_tail_file(): Opens and wipes the contents of the log file.
 *******************************************************************************
 """
 
@@ -36,7 +39,11 @@ _LOCK = Lock()
 
 # Gathers __name__ to be reused in all logging.getLogger() calls.
 # Useful for setting as a default for get_logger().
-root_logger_name = __name__
+_ROOT_LOGGER_NAME = __name__
+
+
+# Initialize _TAIL_TERMINAL as a global value to hold the Popen instance
+_TAIL_TERMINAL = None
 
 
 def _fallback_basic_config(log_path: Path) -> None:
@@ -78,6 +85,10 @@ def _open_tail_terminal(log_path: Path) -> subprocess.Popen | None:
         # Create empty file so tail can start
         log_path.touch()
 
+    # Wipe the log file
+    _erase_tail_file(log_path)
+    
+    # Reuse platform.system()
     system = platform.system()
 
     try:
@@ -89,6 +100,7 @@ def _open_tail_terminal(log_path: Path) -> subprocess.Popen | None:
                 "-Command",
                 f"Get-Content -Path '{log_path}' -Wait -Tail 50"
             ]
+            
             # CREATE_NEW_CONSOLE opens a separate console window
             return subprocess.Popen(
                 cmd, 
@@ -116,6 +128,7 @@ def _open_tail_terminal(log_path: Path) -> subprocess.Popen | None:
             
             try:
                 return subprocess.Popen(cmd)
+
             except FileNotFoundError:
                 # Fallback to xterm if gnome-terminal not present
                 return subprocess.Popen([
@@ -128,6 +141,21 @@ def _open_tail_terminal(log_path: Path) -> subprocess.Popen | None:
     except Exception as e:
         print(f"Failed to open log tail terminal: {e}", file=sys.stderr)
         return None
+        
+        
+def _erase_tail_file(log_path: Path):
+    """
+    Wipes the tail file's contents.
+    """
+    
+    with open(log_path, "r+") as log_file:
+        log_file.seek(0)
+        log_file.truncate()
+        
+    logging.getLogger(_ROOT_LOGGER_NAME).info(
+        "Wiped logger file at " + 
+        str(log_path)
+    )
 
 
 def _configure_logging():
@@ -138,15 +166,16 @@ def _configure_logging():
     - Captures Python warnings
     """
     
-    # TODO: Open logger in another window
     # TODO: Have Logger handle ALL unhandled exceptions
+    
+    global _TAIL_TERMINAL
     
     global _LOGGING_CONFIGURED
     if _LOGGING_CONFIGURED:
         return
         
     # Set root_logger for reuse
-    root_logger = logging.getLogger(root_logger_name)
+    root_logger = logging.getLogger(_ROOT_LOGGER_NAME)
     
     try:
         # Retrieve Path object for log file
@@ -215,7 +244,9 @@ def _configure_logging():
         # Route warnings through logging
         logging.captureWarnings(True)
         
-        _open_tail_terminal(log_path)
+        # Open terminal window and assign instance to _TAIL_TERMINAL
+        _TAIL_TERMINAL = _open_tail_terminal(log_path)
+        print(str(_TAIL_TERMINAL))
         
         # Notify of logger configuration
         root_logger.info(
@@ -227,7 +258,7 @@ def _configure_logging():
         _LOGGING_CONFIGURED = True
 
 
-def get_logger(name: str = root_logger_name) -> logging.Logger:
+def get_logger(name: str = _ROOT_LOGGER_NAME) -> logging.Logger:
     """
     Returns a logger with the given name. 
     Logging is configured only once.
@@ -237,12 +268,15 @@ def get_logger(name: str = root_logger_name) -> logging.Logger:
     return logging.getLogger(name)
     
 
-def kill_logger(name: str = root_logger_name) -> None:
+def kill_logger(name: str = _ROOT_LOGGER_NAME):
     """
-    Kills the provided logger's terminal window.
+    Kills the provided logger's handlers.
     """
     
     target_logger = get_logger(name)
+    
+    # TODO: Exception handling as it stands assumes that everything is the
+    # root logger. This is a bug.
     
     try:
         logging.close(name)
@@ -251,3 +285,28 @@ def kill_logger(name: str = root_logger_name) -> None:
         
     for handler in target_logger.handlers:
         target_logger.removeHandler(handler)
+
+
+def kill_terminal(target_terminal: subprocess.Popen = None):
+    """
+    Kills the provided Popen terminal window.
+    """
+    
+    if target_terminal is None:
+        global _TAIL_TERMINAL
+        target_terminal = _TAIL_TERMINAL
+    
+    root_logger = get_logger(_ROOT_LOGGER_NAME)
+    kill_logger()
+    
+    try:
+        root_logger.info("Killing terminal: " + str(target_terminal))
+        target_terminal.kill()
+        
+    except Exception as e:
+        root_logger.exception(
+            "ERROR: Cannot kill terminal " + 
+            str(target_terminal) + 
+            ": " + 
+            str(e)
+        )

@@ -63,14 +63,30 @@ def test_get_logger(num_loggers: int = 1):
         logger_mod.kill_logger(logger_name)
         
         
-def test_kill_logger(name: str = ""):
+def test_kill_logger(logger_name: str = ""):
     """
     Runs the function kill_logger() and attempts to log an error afterwards.
     """
     
-    target_logger = logger_mod.get_logger(name)
+    target_logger = logger_mod.get_logger(logger_name)
     
-    #logger_mod.kill_logger(name)
+    #logger_mod.kill_logger(logger_name)
         
     # Test if logger still logs
     target_logger.exception("ERROR: Logger has not been killed correctly.")
+    
+    
+def test_kill_terminal():
+    """
+    Runs the function kill_terminal() and attempts to log an error afterwards.
+    """
+    
+    # Initialize root logger
+    root_logger = logger_mod.get_logger()
+    
+    logger_mod.kill_terminal()
+    
+    root_logger.exception("ERROR: Logger has not been killed correctly.")
+    
+    
+    
