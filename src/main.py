@@ -6,11 +6,15 @@ Main pipeline orchestrator.
 # from transform.xslt_transformer import XSLTTransformer
 # from excel.xml_to_excel import XMLToExcel
 from utils.logger import get_logger, kill_terminal
+import utils.xml_utils as xml_mod
 
 main_logger = get_logger()
 
 def run_pipeline():
     main_logger.info("Starting Workday XML pipeline")
+    
+    # Test XML functions
+    print(str(xml_mod.get_settings()))
 
     # 1. Split XML
     # splitter = XMLSplitter()

@@ -1,6 +1,6 @@
 This is where I will put the README. This program aims to take the output from the Workday Web Service Data Source for Get Historical Academic Records, reformat the XML, and split it into multiple Excel files that can be uploaded to the EIB with the Workday Web Service of Bulk Import Put Historical Academic Record.
 
-"wws-get-har-to-bulk-import-har"/
+"generate-xslt-for-wws"/
 │
 ├── README.md
 ├── pyproject.toml          # or requirements.txt

@@ -11,6 +11,7 @@
 *******************************************************************************
     02/27/2026      Initial Version. ECC - fendingers
     03/02/2026      Added logs dir.  ECC - fendingers
+    03/13/2026      Updated project name. ECC - fendingers
 *******************************************************************************
  project_root(): Resolves the project root directory.
  get_dir_path(): Resolves the provided directory path against cached (enum).
@@ -27,7 +28,7 @@ from enum import StrEnum
 
 # Enum for project directory names
 class DirNames(StrEnum):
-    PROJECT_ROOT  = "wws-get-har-to-bulk-import-har"
+    PROJECT_ROOT  = "generate-xslt-for-wws"
     CONFIG_DIR    = "config"
     DATA_DIR      = "data"
     INPUT_DIR     = "input"
@@ -100,7 +101,7 @@ def project_root(root_files = [ConfNames.PYPROJECT, ConfNames.PYTEST]) -> Path:
     raise FileNotFoundError(
         "ERROR: Project root directory not found. "
         "Please ensure that the project root directory is named "
-        "'wws-get-har-to-bulk-import-har'."
+        "'generate-xslt-for-wws'."
     )
 
 

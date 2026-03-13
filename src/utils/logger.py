@@ -246,7 +246,6 @@ def _configure_logging():
         
         # Open terminal window and assign instance to _TAIL_TERMINAL
         _TAIL_TERMINAL = _open_tail_terminal(log_path)
-        print(str(_TAIL_TERMINAL))
         
         # Notify of logger configuration
         root_logger.info(
@@ -292,10 +291,14 @@ def kill_terminal(target_terminal: subprocess.Popen = None):
     Kills the provided Popen terminal window.
     """
     
+    # Default to using _TAIL_TERMINAL as the target
     if target_terminal is None:
         global _TAIL_TERMINAL
         target_terminal = _TAIL_TERMINAL
     
+    # Cleanup the logger handlers
+    # TODO: This should break the following logger calls. This is two bugs 
+    # because it doesn't even kill them right.
     root_logger = get_logger(_ROOT_LOGGER_NAME)
     kill_logger()
     

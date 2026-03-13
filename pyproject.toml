@@ -1,5 +1,5 @@
 [project] 
-name = "wws-get-har-to-bulk-import-har" 
+name = "generate-xslt-for-wws" 
 version = "0.1.0" 
 
 dependencies = [ 
